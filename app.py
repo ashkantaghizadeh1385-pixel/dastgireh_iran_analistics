@@ -3,17 +3,17 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import google.generativeai as genai
 
-# تنظیمات هوش مصنوعی
+# API Config
 GOOGLE_API_KEY = "YOUR_GEMINI_API_KEY" 
 if GOOGLE_API_KEY != "YOUR_GEMINI_API_KEY":
     genai.configure(api_key=GOOGLE_API_KEY)
 
-# تنظیمات ظاهر صفحه
-st.set_page_config(page_title="داشبورد هوشمند دستگیره ایران", layout="wide")
+# Page Settings
+st.set_page_config(page_title="Dastgireh Iran BI", layout="wide")
 st.markdown("<h1 style='text-align: center; color: #1E3A8A;'>🏢 پلتفرم هوش تجاری و تحلیل پیشرفته دستگیره ایران</h1>", unsafe_allow_html=True)
 st.write("---")
 
-# منوی انتخاب دپارتمان
+# Sidebar Menu
 st.sidebar.header("📁 منوی دسترسی")
 department = st.sidebar.selectbox(
     "بخش مورد نظر را انتخاب کنید:",
@@ -22,7 +22,7 @@ department = st.sidebar.selectbox(
 
 st.title(f"📊 {department}")
 
-# آپلود فایل اکسل
+# File Uploader
 uploaded_file = st.file_uploader(f"لطفاً فایل اکسل مربوط به {department} را آپلود کنید", type=["xlsx"])
 
 if uploaded_file is not None:
@@ -35,12 +35,11 @@ if uploaded_file is not None:
         st.write("---")
 
         # ==========================================
-        # بخش اول: تحلیل فروش استوک
+        # 1. STOCK DEPARTMENT
         # ==========================================
         if "استوک" in department:
             st.subheader("🎯 تحلیل ماتریس فروش و پتانسیل‌یابی بازار")
 
-            # قرارگیری دقیق علامت ضرب بین دو ستون محاسباتی
             df['تعداد کل (عدد)'] = df['چند کارتن خریده']  df['تعداد دست هر کارتن']
 
             if 'درصد تخفیف' in df.columns:
@@ -53,7 +52,7 @@ if uploaded_file is not None:
             selected_code = st.selectbox("کد محصول مورد نظر:", df['کد محصول'].unique())
 
             product_data = df[df['کد محصول'] == selected_code]
-            st.write(f"📊 اطلاعات فروش کد محصول *{selected_code}:")
+            st.write(f"📊 اطلاعات فروش کد محصول {selected_code}:")
             st.dataframe(product_data[['کارشناس مربوط', 'مشتری', 'چند کارتن خریده', 'چند کارتن مانده']], use_container_width=True)
 
             st.markdown("### 💡 پیشنهادات هوشمند سیستم هوش تجاری (BI)")
@@ -73,23 +72,22 @@ if uploaded_file is not None:
                     st.write(f"🔸 مشتری {row['مشتری']} هنوز {row['چند کارتن مانده']} کارتن از کد {row['کد محصول']} انبار دارد.")
 
             agent_perf = df.groupby('کارشناس مربوط').agg({'مبلغ نهایی (تومان)': 'sum', 'درصد تخفیف': 'mean'}).reset_index()
-            agent_perf['نمره عملکرد (از ۱۰۰)'] = ((agent_perf['مبلغ نهایی (تومان)'] / agent_perf['مبلغ نهایی (تومان)'].max()  80) + (20 - agent_perf['درصد تخفیف'])).round(1)
+            agent_perf['نمره عملکرد (از ۱۰۰)'] = ((agent_perf['مبلغ نهایی (تومان)'] / agent_perf['مبلغ نهایی (تومان)'].max() * 80) + (20 - agent_perf['درصد تخفیف'])).round(1)
 
             st.write("---")
             st.subheader("🥇 رتبه‌بندی کارشناسان استوک")
             st.dataframe(agent_perf.sort_values('نمره عملکرد (از ۱۰۰)', ascending=False), use_container_width=True)
 
         # ==========================================
-        # بخش دوم و سوم: تحلیل پروژه و درب‌سازی
+        # 2. PROJECT AND DOOR DEPARTMENT
         # ==========================================
         else:
-            st.subheader("🏢 تحلیل وضعیت پروژه‌ها و پ
-
-یگیری‌ها")
+            st.subheader("🏢 تحلیل وضعیت پروژه‌ها و پیگیری‌ها")
 
             agent_perf = df.groupby('کارشناس مربوطه').agg({
                 'تعداد ویزیت': 'sum',
-                'مبلغ اش': 'sum'
+
+'مبلغ اش': 'sum'
             }).reset_index()
 
             agent_perf['نمره عملکرد (از ۱۰۰)'] = (
@@ -110,13 +108,13 @@ if uploaded_file is not None:
                 st.pyplot(fig)
 
         # ==========================================
-        # بخش هوش مصنوعی
+        # 3. AI ANALYSIS
         # ==========================================
         st.write("---")
         st.subheader("🤖 تحلیل داینامیک مدیریتی (هوش مصنوعی)")
 
         if GOOGLE_API_KEY == "YOUR_GEMINI_API_KEY":
-            st.info("💡 *تحلیل خودکار سیستم:* بارگذاری اطلاعات با موفقیت انجام شد. بالاترین راندمان کارشناسان استخراج گردید. برای فعال‌سازی تحلیل متن‌کاوی زنده هوش مصنوعی، کلید API را ست کنید.")
+            st.info("💡 تحلیل خودکار سیستم: بارگذاری اطلاعات با موفقیت انجام شد. بالاترین راندمان کارشناسان استخراج گردید. برای فعال‌سازی تحلیل متن‌کاوی زنده هوش مصنوعی، کلید API را ست کنید.")
         else:
             ai_data = df.head(10).to_string()
             prompt = f"شما مشاور مدیریت شرکت دستگیره ایران هستید. این داده‌های دپارتمان {department} را تحلیل کنید و نقاط قوت، ضعف و پیشنهاد توسعه بدهید:\n{ai_data}"
