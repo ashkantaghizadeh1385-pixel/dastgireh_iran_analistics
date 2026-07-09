@@ -4,8 +4,8 @@ import matplotlib.pyplot as plt
 import google.generativeai as genai
 
 # API Config
-GOOGLE_API_KEY = "YOUR_GEMINI_API_KEY" 
-if GOOGLE_API_KEY != "YOUR_GEMINI_API_KEY":
+GOOGLE_API_KEY = "AQ.Ab8RN6LUKwAjCbc_UkwDK7fCk1SJNVLApDj2HZ0sVlTxCed49A" 
+if GOOGLE_API_KEY != "AQ.Ab8RN6LUKwAjCbc_UkwDK7fCk1SJNVLApDj2HZ0sVlTxCed49A":
     genai.configure(api_key=GOOGLE_API_KEY)
 
 # Page Settings
